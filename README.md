@@ -1,4 +1,17 @@
-# mbb-dashboard-api Routes
+# mbb-dashboard-api
+
+# Flow
+
+1. User uploads a bank statement.
+2. The system processes the bank statement and extracts transactions.
+3. The system stores the transactions in the database.
+4. The user can view the transactions through the API.
+5. The user can filter transactions by date range, bank statement ID, and sort order.
+6. The user can download the bank statement in PDF format.
+7. The user can delete a bank statement, which also deletes the associated transactions.
+8. The user can view the details of a specific transaction.
+
+# API Endpoints
 
 ## Bank Statements
 
@@ -40,14 +53,3 @@
     - `sort=amount`
 
 - **GET** `/api/transactions/:id`
-
-# Flow
-
-1. User uploads a bank statement.
-2. The system processes the bank statement and extracts transactions.
-3. The system stores the transactions in the database.
-4. The user can view the transactions through the API.
-5. The user can filter transactions by date range, bank statement ID, and sort order.
-6. The user can download the bank statement in PDF format.
-7. The user can delete a bank statement, which also deletes the associated transactions.
-8. The user can view the details of a specific transaction.

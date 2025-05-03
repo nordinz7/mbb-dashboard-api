@@ -44,7 +44,7 @@
 
   - Query Parameters:
     - `q=search term`
-    - `bankStatementId=123`
+    - `bank_statement_id=123`
     - `date_from=YYYY-MM-DD`
     - `date_to=YYYY-MM-DD`
     - `limit=10`

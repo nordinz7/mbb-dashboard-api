@@ -1,4 +1,5 @@
-export class CreateTransactionDto {
+export interface Transaction {
+  id: number;
   statementId: number;
   date: Date;
   desc: string;

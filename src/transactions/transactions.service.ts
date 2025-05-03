@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { Transaction } from 'src/transactions/interfaces/transaction.interface';
 
 @Injectable()
 export class TransactionsService {
   // In-memory storage for demonstration
-  private transactions = [];
+  private transactions: Transaction[] = [];
   private idCounter = 1;
 
   create(createTransactionDto: CreateTransactionDto) {
@@ -23,12 +24,10 @@ export class TransactionsService {
     let result = [...this.transactions];
     // Filtering
     if (query.q) {
-      result = result.filter(
-        (t) => t.description && t.description.includes(query.q),
-      );
+      result = result.filter((t) => t.desc && t.desc.includes(query.q));
     }
     if (query.bankStatementId) {
-      result = result.filter((t) => t.bankStatementId == query.bankStatementId);
+      result = result.filter((t) => t.statementId == query.bankStatementId);
     }
     if (query.dateFrom) {
       result = result.filter(

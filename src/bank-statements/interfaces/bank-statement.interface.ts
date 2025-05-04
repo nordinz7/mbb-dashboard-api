@@ -4,16 +4,14 @@ export interface BankStatement {
   id: number;
   date: Date;
   accountNumber: string;
-  totalPages: number;
-  branch: string;
-  beginningBalance: number;
-  endingBalance: number;
-  totalDebit: number;
-  totalCredit: number;
+  beginningBalance?: number;
+  endingBalance?: number;
+  totalDebit?: number;
+  totalCredit?: number;
   createdAt: Date;
   updatedAt: Date;
-  userId: number;
-  transactions: Transaction[];
+  userId?: number;
+  transactions?: Transaction[];
 }
 
 export interface BankStatementQuery {

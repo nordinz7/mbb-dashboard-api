@@ -2,11 +2,15 @@ import { Injectable, Res } from '@nestjs/common';
 import { CreateBankStatementDto } from './dto/create-bank-statement.dto';
 import { UpdateBankStatementDto } from './dto/update-bank-statement.dto';
 import { Response } from 'express';
+import {
+  BankStatement,
+  BankStatementQuery,
+} from 'src/bank-statements/interfaces/bank-statement.interface';
 
 @Injectable()
 export class BankStatementsService {
   // In-memory storage for demonstration
-  private bankStatements = [];
+  private bankStatements: BankStatement[] = [];
   private transactions = [];
   private idCounter = 1;
 
@@ -14,7 +18,7 @@ export class BankStatementsService {
     // Simulate extracting transactions and saving bank statement
     const bankStatement = {
       id: this.idCounter++,
-      fileName: file.originalname,
+      fileName: file?.filename,
       createdAt: new Date(),
       updatedAt: new Date(),
       amount: 0,
@@ -24,7 +28,7 @@ export class BankStatementsService {
     return bankStatement;
   }
 
-  findAll(query: any) {
+  findAll(query: BankStatementQuery) {
     let result = [...this.bankStatements];
     // Filtering
     if (query.q) {
@@ -32,12 +36,12 @@ export class BankStatementsService {
     }
     if (query.dateFrom) {
       result = result.filter(
-        (bs) => new Date(bs.createdAt) >= new Date(query.dateFrom),
+        (bs) => new Date(bs.createdAt) >= new Date(query?.dateFrom),
       );
     }
     if (query.dateTo) {
       result = result.filter(
-        (bs) => new Date(bs.createdAt) <= new Date(query.dateTo),
+        (bs) => new Date(bs.createdAt) <= new Date(query?.dateTo),
       );
     }
     // Sorting

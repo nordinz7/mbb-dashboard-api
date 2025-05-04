@@ -12,7 +12,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { BankStatementsService } from './bank-statements.service';
-import { CreateBankStatementDto } from './dto/create-bank-statement.dto';
 import { UpdateBankStatementDto } from './dto/update-bank-statement.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';

@@ -1,9 +1,0 @@
-export class CreateTransactionDto {
-  statementId: number;
-  date: Date;
-  desc: string;
-  amt: number;
-  bal: number;
-  createdAt: Date;
-  updatedAt: Date;
-}

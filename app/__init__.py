@@ -17,9 +17,10 @@ def create_app():
     ma.init_app(app)
 
     # Register blueprints here
-    # from app.routes.bank_statements import bank_statements_bp
-    # from app.routes.transactions import transactions_bp
-    # app.register_blueprint(bank_statements_bp)
-    # app.register_blueprint(transactions_bp)
+    from app.routes.bank_statements import bank_statements_bp
+    from app.routes.transactions import transactions_bp
+
+    app.register_blueprint(bank_statements_bp)
+    app.register_blueprint(transactions_bp)
 
     return app

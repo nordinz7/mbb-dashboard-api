@@ -5,6 +5,7 @@ from app.schemas import BankStatementSchema
 from sqlalchemy import desc
 from datetime import datetime
 import io
+from maybankpdf2json import MaybankPdf2Json
 
 bank_statements_bp = Blueprint(
     "bank_statements", __name__, url_prefix="/api/bank-statements"
@@ -13,16 +14,23 @@ bank_statements_bp = Blueprint(
 
 @bank_statements_bp.route("/upload", methods=["POST"])
 def upload_bank_statement():
-    # Placeholder: handle file upload and transaction extraction
-    # For now, just create a dummy bank statement
-    file = request.files.get("file")
-    if not file:
-        return jsonify({"error": "No file uploaded"}), 400
-    filename = file.filename
-    bank_statement = BankStatement(filename=filename)
-    db.session.add(bank_statement)
+    # Support multiple file uploads
+    files = request.files.getlist("file")
+    if not files or files == [None]:
+        return jsonify({"error": "No file(s) uploaded"}), 400
+    created_statements = []
+    for file in files:
+        if not file:
+            continue
+        filename = file.filename
+        mbb = MaybankPdf2Json(file, "04Nov1997")
+        data = mbb.json()
+        print(data)
+        bank_statement = BankStatement(filename=filename)
+        db.session.add(bank_statement)
+        created_statements.append(bank_statement)
     db.session.commit()
-    return BankStatementSchema().jsonify(bank_statement), 201
+    return BankStatementSchema(many=True).jsonify(created_statements), 201
 
 
 @bank_statements_bp.route("", methods=["GET"])

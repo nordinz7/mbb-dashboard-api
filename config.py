@@ -8,4 +8,4 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", "uploads")
-    ALLOWED_EXTENSIONS = {"pdf", "csv"}
+    ALLOWED_EXTENSIONS = {"pdf"}

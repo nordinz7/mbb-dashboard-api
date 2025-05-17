@@ -1,4 +1,3 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -22,5 +21,9 @@ def create_app():
 
     app.register_blueprint(bank_statements_bp)
     app.register_blueprint(transactions_bp)
+
+    @app.route("/")
+    def root():
+        return {"message": "Ok"}
 
     return app

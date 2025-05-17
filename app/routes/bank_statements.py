@@ -1,8 +1,11 @@
 from flask import Blueprint, request, jsonify, g
-from datetime import datetime
 
+from app.dao.bank_statement_dao import (
+    delete_bank_statement,
+    get_bank_statement,
+    list_bank_statements,
+)
 from app.dao.shared import process_bank_statement
-from app.dao.transaction_dao import create_transaction, list_transactions
 
 
 bank_statements_bp = Blueprint(
@@ -25,7 +28,8 @@ def upload_bank_statement():
 
 
 @bank_statements_bp.route("", methods=["GET"])
-def list_bank_statements():
+def list_bs():
+    account_number = request.args.get("account_number")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
     limit = int(request.args.get("limit", 10))
@@ -33,32 +37,22 @@ def list_bank_statements():
     sort = request.args.getlist("sort")
 
     return jsonify(
-        {
-            "items": [],  # items,
-            "total": 0,  # query.count(),
-        }
+        list_bank_statements(
+            account_number=account_number,
+            limit=limit,
+            offset=offset,
+            date_from=date_from,
+            date_to=date_to,
+            sort=sort,
+        )
     )
 
 
 @bank_statements_bp.route("/<int:id>", methods=["GET"])
-def get_bank_statement(id):
-    download = request.args.get("download") == "true"
-    return jsonify(
-        {
-            "id": id,
-            "filename": "example.pdf",
-            "created_at": datetime.now().isoformat(),
-            "transactions": [
-                {
-                    "date": "2023-01-01",
-                    "amount": 100.0,
-                    "description": "Example transaction",
-                }
-            ],
-        }
-    )
+def get_bs(id):
+    return jsonify(get_bank_statement(id))
 
 
 @bank_statements_bp.route("/<int:id>", methods=["DELETE"])
-def delete_bank_statement(id):
-    return "", 204
+def delete_bs(id):
+    return jsonify(delete_bank_statement(id)), 204

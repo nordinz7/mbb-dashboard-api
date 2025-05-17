@@ -1,43 +1,40 @@
 from flask import Blueprint, request, jsonify
-from datetime import datetime
+
+from app.dao.transaction_dao import (
+    delete_transaction,
+    get_transaction,
+    list_transactions,
+)
 
 transactions_bp = Blueprint("transactions", __name__, url_prefix="/api/transactions")
 
 
 @transactions_bp.route("", methods=["GET"])
-def list_transactions():
+def list_trs():
     q = request.args.get("q")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
     limit = int(request.args.get("limit", 10))
     offset = int(request.args.get("offset", 0))
     sort = request.args.getlist("sort")
-    # if q:
-    #     query = query.filter(Transaction.description.ilike(f"%{q}%"))
-    # if bank_statement_id:
-    #     query = query.filter(Transaction.bank_statement_id == bank_statement_id)
-    # if date_from:
-    #     query = query.filter(Transaction.date >= date_from)
-    # if date_to:
-    #     query = query.filter(Transaction.date <= date_to)
-    # for s in sort:
-    #     if s.startswith("-"):
-    #         field = s[1:]
-    #         query = query.order_by(desc(getattr(Transaction, field, "created_at")))
-    #     else:
-    #         query = query.order_by(getattr(Transaction, s, "created_at"))
-    # items = query.offset(offset).limit(limit).all()
-    return jsonify({"ok": True})
+
+    return jsonify(
+        list_transactions(
+            q=q,
+            limit=limit,
+            offset=offset,
+            date_from=date_from,
+            date_to=date_to,
+            sort=sort,
+        )
+    )
 
 
 @transactions_bp.route("/<int:id>", methods=["GET"])
-def get_transaction(id):
-    return jsonify(
-        {
-            "id": id,
-            "date": "2023-01-01",
-            "amount": 100.0,
-            "description": "Example transaction",
-            "bank_statement_id": 1,
-        }
-    )
+def get_trs(id):
+    return jsonify(get_transaction(id))
+
+
+@transactions_bp.route("/<int:id>", methods=["DELETE"])
+def delete_trs(id):
+    return jsonify(delete_transaction(id)), 204

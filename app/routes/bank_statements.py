@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from datetime import datetime
 from maybankpdf2json import MaybankPdf2Json
 
-from app.utils.db import create_transaction, list_transactions
+from app.utils.db import create_transaction, list_transactions, process_bank_statement
 
 
 bank_statements_bp = Blueprint(
@@ -16,25 +16,12 @@ def upload_bank_statement():
     files = request.files.getlist("file")
     if not files or files == [None]:
         return jsonify({"error": "No file(s) uploaded"}), 400
-    for file in files:
-        if not file:
-            continue
-        filename = file.filename
-        mbb = MaybankPdf2Json(file, "04Nov1997")
-        data = mbb.json()
-        db = g.get("db").cursor()
-        if not db:
-            return jsonify({"error": "Database connection error"}), 500
-        for transaction in data:
-            t_date = datetime.strptime(transaction["date"], "%d/%m/%y").date()
-            t_amount = float(transaction["trans"])
-            t_description = transaction["desc"]
-            t_bal = float(transaction["bal"])
-            # Assuming a function create_transaction exists to save the transaction
-            r = create_transaction(t_date, t_amount, t_description, t_bal)
-    # Return a proper array of transaction objects
-    transactions = list_transactions(limit=100)  # You can adjust the limit as needed
-    return jsonify(transactions), 201
+    db = g.get("db")
+    if not db:
+        return jsonify({"error": "Database connection error"}), 500
+
+    creation = [process_bank_statement(file) for file in files]
+    return jsonify(creation), 201
 
 
 @bank_statements_bp.route("", methods=["GET"])

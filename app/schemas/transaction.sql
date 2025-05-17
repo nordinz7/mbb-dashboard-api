@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS transactions (
     balance REAL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     bank_statement_id INTEGER,
-    FOREIGN KEY (bank_statement_id) REFERENCES bank_statements (id) ON
-DELETE CASCADE
+    FOREIGN KEY (bank_statement_id) REFERENCES bank_statements (id) ON DELETE CASCADE
 );

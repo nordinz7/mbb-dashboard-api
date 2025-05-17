@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, g
 from datetime import datetime
 from maybankpdf2json import MaybankPdf2Json
 
+from app.utils.db import create_transaction, list_transactions
+
 
 bank_statements_bp = Blueprint(
     "bank_statements", __name__, url_prefix="/api/bank-statements"
@@ -14,7 +16,6 @@ def upload_bank_statement():
     files = request.files.getlist("file")
     if not files or files == [None]:
         return jsonify({"error": "No file(s) uploaded"}), 400
-    created_statements = []
     for file in files:
         if not file:
             continue
@@ -31,20 +32,10 @@ def upload_bank_statement():
             t_amount = float(transaction["trans"])
             t_description = transaction["desc"]
             t_bal = float(transaction["bal"])
-            print(f"Transaction date: {t_date}")
-            print(f"Transaction amount: {t_amount}")
-            print(f"Transaction description: {t_description}")
-            print(f"Transaction balance: {t_bal}")
-            db.execute(
-                "INSERT INTO transactions (date, amount, description, balance) VALUES (?, ?, ?, ?)",
-                (
-                    t_date,
-                    t_amount,
-                    t_description,
-                    t_bal,
-                ),
-            )
-    return jsonify({"message": "Bank statement(s) uploaded successfully"}), 201
+            # Assuming a function create_transaction exists to save the transaction
+            r = create_transaction(t_date, t_amount, t_description, t_bal)
+            print(f"Transaction created with ID: {r}")
+    return jsonify(list_transactions()), 201
 
 
 @bank_statements_bp.route("", methods=["GET"])

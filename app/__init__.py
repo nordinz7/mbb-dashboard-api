@@ -1,13 +1,16 @@
 from flask import Flask, g
 from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 
 from app.utils.db import get_db_connection
+
 
 ma = Marshmallow()
 
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)  # 👈 Enables CORS for all routes and all origins
     app.config.from_object("config.Config")
 
     ma.init_app(app)

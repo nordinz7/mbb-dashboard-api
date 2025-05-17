@@ -22,9 +22,7 @@ def upload_bank_statement():
         filename = file.filename
         mbb = MaybankPdf2Json(file, "04Nov1997")
         data = mbb.json()
-        print(f"Parsed data: {data}")
         db = g.get("db").cursor()
-        print(f"DB: {db}")
         if not db:
             return jsonify({"error": "Database connection error"}), 500
         for transaction in data:
@@ -34,8 +32,9 @@ def upload_bank_statement():
             t_bal = float(transaction["bal"])
             # Assuming a function create_transaction exists to save the transaction
             r = create_transaction(t_date, t_amount, t_description, t_bal)
-            print(f"Transaction created with ID: {r}")
-    return jsonify(list_transactions()), 201
+    # Return a proper array of transaction objects
+    transactions = list_transactions(limit=100)  # You can adjust the limit as needed
+    return jsonify(transactions), 201
 
 
 @bank_statements_bp.route("", methods=["GET"])

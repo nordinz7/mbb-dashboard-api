@@ -35,6 +35,6 @@ def get_trs(id):
     return jsonify(get_transaction(id))
 
 
-@transactions_bp.route("/<int:id>", methods=["DELETE"])
-def delete_trs(id):
-    return jsonify(delete_transaction(id)), 204
+# @transactions_bp.route("/<int:id>", methods=["DELETE"])
+# def delete_trs(id):
+#     return jsonify(delete_transaction(id)), 204

@@ -89,11 +89,3 @@ def delete_transaction(transaction_id):
     cur = get_cursor()
     cur.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
     return cur.rowcount
-
-
-def delete_transactions_by_bank_statement(bank_statement_id):
-    cur = get_cursor()
-    cur.execute(
-        "DELETE FROM transactions WHERE bank_statement_id = ?", (bank_statement_id,)
-    )
-    return cur.rowcount

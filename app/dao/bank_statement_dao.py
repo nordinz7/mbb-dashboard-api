@@ -89,22 +89,20 @@ def list_bank_statements(
 
 
 def delete_bank_statement(bank_statement_id, date=None, account_number=None):
-    if not bank_statement_id and (not date or not account_number):
+    bs = get_bank_statement(
+        bank_statement_id=bank_statement_id, date=date, account_number=account_number
+    )
+
+    if not bs:
         return None
+
     cur = get_cursor()
-    query = "DELETE FROM bank_statements WHERE 1=1"
-    params = []
-    if bank_statement_id:
-        query += " AND id = ?"
-        params.append(bank_statement_id)
-    if date:
-        query += " AND date = ?"
-        params.append(date)
-    if account_number:
-        query += " AND account_number = ?"
-        params.append(account_number)
-    cur.execute(query, params)
-    if cur.rowcount == 0:
-        return None
-    else:
-        return cur.rowcount
+
+    cur.execute(
+        """
+        DELETE FROM bank_statements
+        WHERE id = ?
+        """,
+        (bank_statement_id,),
+    )
+    return cur.rowcount > 0

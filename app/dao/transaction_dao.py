@@ -20,36 +20,80 @@ def get_transaction(transaction_id):
     return dict(row) if row else None
 
 
-def list_transactions(limit=10, offset=0, bank_statement_id=None):
+def list_transactions(
+    limit=10,
+    offset=0,
+    bank_statement_id=None,
+    q=None,
+    date_from=None,
+    date_to=None,
+    sort=None,
+):
     cur = get_cursor()
+
+    # Build WHERE clause dynamically
+    conditions = []
+    params = []
+
     if bank_statement_id:
-        cur.execute(
-            "SELECT * FROM transactions WHERE bank_statement_id = ? ORDER BY date DESC LIMIT ? OFFSET ?",
-            (bank_statement_id, limit, offset),
+        conditions.append("bank_statement_id = ?")
+        params.append(bank_statement_id)
+
+    if q:
+        conditions.append("description LIKE ?")
+        params.append(f"%{q}%")
+
+    if date_from:
+        conditions.append("date >= ?")
+        params.append(date_from)
+
+    if date_to:
+        conditions.append("date <= ?")
+        params.append(date_to)
+
+    where_sql = f" WHERE {' AND '.join(conditions)}" if conditions else ""
+
+    # Handle sorting
+    if sort:
+        order_sql = " ORDER BY " + ", ".join(
+            f"{s[1:]} DESC" if s.startswith("-") else f"{s} ASC" for s in sort
         )
     else:
-        cur.execute(
-            "SELECT * FROM transactions ORDER BY date DESC LIMIT ? OFFSET ?",
-            (limit, offset),
-        )
-    rows = cur.fetchall()
-    return [dict(row) for row in rows]
+        order_sql = " ORDER BY date DESC"
 
+    # Final SQL with pagination
+    query = f"""
+        SELECT * FROM transactions
+        {where_sql}
+        {order_sql}
+        LIMIT ? OFFSET ?
+    """
+    paginated_params = params + [limit, offset]
+    cur.execute(query, tuple(paginated_params))
+    rows = [dict(row) for row in cur.fetchall()]
 
-def update_transaction(transaction_id, **kwargs):
-    cur = get_cursor()
-    fields = []
-    values = []
-    for k, v in kwargs.items():
-        fields.append(f"{k} = ?")
-        values.append(v)
-    values.append(transaction_id)
-    sql = f"UPDATE transactions SET {', '.join(fields)} WHERE id = ?"
-    cur.execute(sql, values)
-    return cur.rowcount
+    # Get total count
+    count_query = f"SELECT COUNT(*) FROM transactions {where_sql}"
+    cur.execute(count_query, tuple(params))
+    total = cur.fetchone()[0]
+
+    return {
+        "rows": rows,
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+    }
 
 
 def delete_transaction(transaction_id):
     cur = get_cursor()
     cur.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
+    return cur.rowcount
+
+
+def delete_transactions_by_bank_statement(bank_statement_id):
+    cur = get_cursor()
+    cur.execute(
+        "DELETE FROM transactions WHERE bank_statement_id = ?", (bank_statement_id,)
+    )
     return cur.rowcount

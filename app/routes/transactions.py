@@ -7,13 +7,11 @@ transactions_bp = Blueprint("transactions", __name__, url_prefix="/api/transacti
 @transactions_bp.route("", methods=["GET"])
 def list_transactions():
     q = request.args.get("q")
-    bank_statement_id = request.args.get("bank_statement_id")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
     limit = int(request.args.get("limit", 10))
     offset = int(request.args.get("offset", 0))
-    # sort = request.args.getlist("sort")
-    # query = Transaction.query
+    sort = request.args.getlist("sort")
     # if q:
     #     query = query.filter(Transaction.description.ilike(f"%{q}%"))
     # if bank_statement_id:

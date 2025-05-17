@@ -26,26 +26,12 @@ def upload_bank_statement():
 
 @bank_statements_bp.route("", methods=["GET"])
 def list_bank_statements():
-    q = request.args.get("q")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
     limit = int(request.args.get("limit", 10))
     offset = int(request.args.get("offset", 0))
     sort = request.args.getlist("sort")
-    # query =
-    # if q:
-    #     query = query.filter(BankStatement.filename.ilike(f"%{q}%"))
-    # if date_from:
-    #     query = query.filter(BankStatement.created_at >= date_from)
-    # if date_to:
-    #     query = query.filter(BankStatement.created_at <= date_to)
-    # for s in sort:
-    #     if s.startswith("-"):
-    #         field = s[1:]
-    #         query = query.order_by(desc(getattr(BankStatement, field, "created_at")))
-    #     else:
-    #         query = query.order_by(getattr(BankStatement, s, "created_at"))
-    # items = query.offset(offset).limit(limit).all()
+
     return jsonify(
         {
             "items": [],  # items,

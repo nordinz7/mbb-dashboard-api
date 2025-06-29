@@ -18,9 +18,11 @@ def create_app():
     # Register blueprints here
     from app.routes.bank_statements import bank_statements_bp
     from app.routes.transactions import transactions_bp
+    from app.routes.account_numbers import account_numbers_bp
 
     app.register_blueprint(bank_statements_bp)
     app.register_blueprint(transactions_bp)
+    app.register_blueprint(account_numbers_bp)
 
     @app.before_request
     def before_request():

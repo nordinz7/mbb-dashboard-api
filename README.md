@@ -49,3 +49,13 @@
     - `sort=-amount`
 
 - **GET** `/api/transactions/:id`
+
+## Account Numbers
+
+- **GET** `/api/account-numbers`
+
+  - Query Parameters:
+    - `q=search term` (optional)
+    - `limit=10`
+    - `offset=0`
+    - `sort=account_number` (default: ascending)

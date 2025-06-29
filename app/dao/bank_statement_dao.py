@@ -106,3 +106,59 @@ def delete_bank_statement(bank_statement_id, date=None, account_number=None):
         (bank_statement_id,),
     )
     return cur.rowcount > 0
+
+
+def get_unique_account_numbers(q=None, limit=10, offset=0, sort=None):
+    """
+    Get unique account numbers from bank_statements table with pagination and search.
+
+    Args:
+        q (str): Optional search term to filter account numbers
+        limit (int): Number of records to return (default: 10)
+        offset (int): Number of records to skip (default: 0)
+        sort (list): Sort parameters (default: account_number ASC)
+
+    Returns:
+        dict: Dictionary containing rows, total, offset, and limit
+    """
+    cur = get_cursor()
+
+    # Build WHERE clause for search
+    where_clauses = []
+    params = []
+
+    if q:
+        where_clauses.append("account_number LIKE ?")
+        params.append(f"%{q}%")
+
+    where_sql = ""
+    if where_clauses:
+        where_sql = " WHERE " + " AND ".join(where_clauses)
+
+    # Build ORDER BY clause
+    if sort:
+        order_clauses = [
+            f"{s[1:]} DESC" if s.startswith("-") else f"{s} ASC" for s in sort
+        ]
+        order_sql = " ORDER BY " + ", ".join(order_clauses)
+    else:
+        order_sql = " ORDER BY account_number ASC"
+
+    # Final SELECT query with pagination for unique account numbers
+    query = f"SELECT DISTINCT account_number FROM bank_statements{where_sql}{order_sql} LIMIT ? OFFSET ?"
+    cur.execute(query, params + [limit, offset])
+    rows = [{"account_number": row[0]} for row in cur.fetchall()]
+
+    # Total count query for unique account numbers
+    count_query = (
+        f"SELECT COUNT(DISTINCT account_number) FROM bank_statements{where_sql}"
+    )
+    cur.execute(count_query, params)
+    total = cur.fetchone()[0]
+
+    return {
+        "rows": rows,
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+    }

@@ -19,7 +19,7 @@
 - **GET** `/api/bank-statements`
 
   - Query Parameters:
-    - `q=search term`
+    - `account_number=123456789` mandatory
     - `date_from=YYYY-MM-DD`
     - `date_to=YYYY-MM-DD`
     - `limit=10`
@@ -29,9 +29,6 @@
     - `sort=amount`
 
 - **GET** `/api/bank-statements/:id`
-
-  - Query Parameters:
-    - `download=true`
 
 - **DELETE** `/api/bank-statements/:id`
 
@@ -49,6 +46,6 @@
     - `limit=10`
     - `offset=0`
     - `sort=createdAt`
-    - `sort=amount`
+    - `sort=-amount`
 
 - **GET** `/api/transactions/:id`

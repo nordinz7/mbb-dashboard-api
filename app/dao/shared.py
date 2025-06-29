@@ -38,7 +38,7 @@ def process_bank_statement(file):
             o["bank_statement_id"] = exist["id"]
             o["date"] = exist["date"]
             o["account_number"] = exist["account_number"]
-            o["message"] = "Bank statement already exists"
+            o["message"] = "already exists"
             return o
 
         b_id = create_bank_statement(
@@ -63,7 +63,7 @@ def process_bank_statement(file):
         get_db().commit()
 
         o["success"] = True
-        o["message"] = "Bank statement and transactions processed successfully"
+        o["message"] = "processed"
     except Exception as e:
         o["message"] = f"Error processing bank statement: {e}"
     return o

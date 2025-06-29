@@ -23,8 +23,10 @@ def upload_bank_statement():
     if not db:
         return jsonify({"error": "Database connection error"}), 500
 
+    # Process and sort by date (latest first)
     creation = [process_bank_statement(file) for file in files]
-    return jsonify(creation), 201
+    creation_sorted = sorted(creation, key=lambda x: x.get("date", ""), reverse=True)
+    return jsonify(creation_sorted), 201
 
 
 @bank_statements_bp.route("", methods=["GET"])
